@@ -1,0 +1,158 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="static\style.css">
+</head>
+<body>
+    <nav>
+        <h1 style="color: hotpink;">🎮 Tic Tac Toe</h1>
+        <button onclick="toggleTheme()" id="themeButton">🌝</button>  
+    </nav>
+    <div id = "status">
+        <h2>{{currentstatus}}</h2>
+    </div>
+    <div id="board">
+        <form method="post" action="/">
+            <input type="hidden" id="button_clicked" name="button_clicked">
+        </form>
+        <button id="1" onclick="handleClick(1)">{{board[0]}}</button>
+        <button id="2" onclick="handleClick(2)">{{board[1]}}</button>
+        <button id="3" onclick="handleClick(3)">{{board[2]}}</button>
+        <br>
+        <button id="4" onclick="handleClick(4)">{{board[3]}}</button>
+        <button id="5" onclick="handleClick(5)">{{board[4]}}</button>
+        <button id="6" onclick="handleClick(6)">{{board[5]}}</button>
+        <br>
+        <button id="7" onclick="handleClick(7)">{{board[6]}}</button>
+        <button id="8" onclick="handleClick(8)">{{board[7]}}</button>
+        <button id="9" onclick="handleClick(9)">{{board[8]}}</button>
+    </div>
+
+    <audio id="pingSound" src="{{ url_for('static', filename='pingpong.mp3') }}"></audio>
+
+<script>
+  {% if play_sound %}
+    // Get the audio element
+    var pingSound = document.getElementById('pingSound');
+    // Play the ping pong sound
+    pingSound.play();
+  {% endif %}
+</script>
+
+<audio id="winSound" src="{{ url_for('static', filename='win.mp3') }}"></audio>
+
+<script>
+  {% if win_sound %}
+    var winSound = document.getElementById('winSound');
+    winSound.play();
+  {% endif %}
+</script>
+
+<audio id="othersSound" src="{{ url_for('static', filename='others.mp3') }}"></audio>
+
+<script>
+  {% if other_sound %}
+    // Get the audio element
+    var othersSound = document.getElementById('othersSound');
+    // Play the others sound
+    othersSound.play();
+  {% endif %}
+</script>
+
+<audio id="restartSound" src="{{ url_for('static', filename='retry.mp3') }}"></audio>
+
+<script>
+  {% if restart_sound %}
+    // Get the audio element
+    var restartSound = document.getElementById('restartSound');
+    // Play the restart sound
+    restartSound.play();
+  {% endif %}
+</script>
+
+
+    <div style="position: relative; text-align: center; margin-top: 20px;">
+        <form action="/" method="post">
+            <input type="hidden" id="Restart" name="Restart">
+            <button type="button" onclick="handleRestart()" style="font-size: 35px; width: 40px; height: 40px; background: none; border: none; cursor: pointer; transition: transform 0.2s ease-in-out;">
+                🔄️
+            </button>
+        </form>
+    </div>
+    
+    
+    <script>
+        // Check if a theme is stored in localStorage and apply it
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            }
+        });
+
+        function toggleTheme() {
+            var body = document.body;
+            var currentTheme = body.classList.contains('night-theme') ? 'day' : 'night';
+
+            applyTheme(currentTheme);
+            localStorage.setItem('theme', currentTheme);
+        }
+
+        function applyTheme(theme) {
+            var body = document.body;
+            var board = document.getElementById('board');
+            var nav = document.querySelector('nav');
+            var buttons = document.querySelectorAll('#board button');
+            var themeButton = document.getElementById('themeButton');
+
+            body.classList.toggle('night-theme', theme === 'night');
+            board.classList.toggle('night-theme', theme === 'night');
+            nav.classList.toggle('night-theme', theme === 'night');
+
+            buttons.forEach(function(button) {
+                button.classList.toggle('night-theme', theme === 'night');
+            });
+
+            themeButton.textContent = theme === 'night' ? '🌞' : '🌝';
+        }
+
+        function handleClick(buttonId) {
+            document.getElementById('button_clicked').value = buttonId;
+            document.forms[0].submit();
+        }
+
+        function handleRestart() {
+            document.getElementById('Restart').value = 'Restart';
+            document.forms[1].submit();
+        }
+
+
+
+        var currentStatus = "win";
+        var statusElement = document.getElementById("statusMessage");
+        // Set the class dynamically based on the currentStatus
+        statusElement.className = "win"; // Example, replace with your logic
+        // Set the innerHTML based on the currentStatus
+        switch (currentStatus) {
+            case "ongoing":
+                statusElement.innerHTML = "Ongoing";
+                break;
+            case "win":
+                statusElement.innerHTML = "You Win!";
+                break;
+            case "draw":
+                statusElement.innerHTML = "Match Drawn";
+                break;
+            case "lose":
+                statusElement.innerHTML = "You Lose!";
+                break;
+            default:
+                statusElement.innerHTML = "Unknown Status";
+        }
+    </script>
+</body>
+</html>
